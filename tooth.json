@@ -1,16 +1,16 @@
 {
   "format_version": 3,
   "format_uuid": "289f771f-2c9a-4d73-9f3f-8492495a924d",
-  "tooth": "github.com/LiteLDev/levilamina-mod-template",
-  "version": "0.0.0",
+  "tooth": "github.com/PuceLi/NameTagPlus",
+  "version": "1.0.0",
   "info": {
-    "name": "My Mod",
-    "description": "Description of my mod",
+    "name": "NameTagPlus",
+    "description": "解除命名牌的使用限制",
     "tags": [
       "platform:levilamina",
       "type:mod"
     ],
-    "avatar_url": "https://example.com/my-mod/avatar.png"
+    "avatar_url": ""
   },
   "variants": [
     {
@@ -23,13 +23,13 @@
         {
           "type": "zip",
           "urls": [
-            "https://{{tooth}}/releases/download/v{{version}}/levilamina-mod-template-server-windows-x64.zip"
+            "https://{{tooth}}/releases/download/v{{version}}/NameTagPlus-server-windows-x64.zip"
           ],
           "placements": [
             {
               "type": "dir",
-              "src": "my-mod/",
-              "dest": "plugins/my-mod/"
+              "src": "NameTagPlus/",
+              "dest": "plugins/NameTagPlus/"
             }
           ]
         }
@@ -57,13 +57,13 @@
         {
           "type": "zip",
           "urls": [
-            "https://{{tooth}}/releases/download/v{{version}}/levilamina-mod-template-client-windows-x64.zip"
+            "https://{{tooth}}/releases/download/v{{version}}/NameTagPlus-client-windows-x64.zip"
           ],
           "placements": [
             {
               "type": "dir",
-              "src": "my-mod/",
-              "dest": "mods/my-mod/"
+              "src": "NameTagPlus/",
+              "dest": "mods/NameTagPlus/"
             }
           ]
         }

@@ -2,6 +2,8 @@
     "name": "${modName}",
     "entry": "${modFile}",
     "version": "${modVersion}",
+    "author": "PuceLi",
+    "description": "解除命名牌的使用限制",
     "type": "native",
     "platform": "${modPlatform}"
 }
