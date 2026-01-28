@@ -21,7 +21,7 @@ public:
 constexpr int InventoryTransactionError_Success = 0;
 
 LL_AUTO_STATIC_HOOK(
-    ForceNameTag,
+    NameTagPlus,
     ll::memory::HookPriority::Normal,
     "48 8B C4 48 89 58 ? 55 56 57 41 54 41 55 41 56 41 57 48 8D A8 ? ? ? ? 48 81 EC ? ? ? ? 0F 29 70 ? 0F 29 78 ? 44 0F 29 40 ? 44 0F 29 48 ? 48 8B 05 ? ? ? ? 48 33 C4 48 89 85 ? ? ? ? 45 0F B6 E0"_sig,
     int,            
