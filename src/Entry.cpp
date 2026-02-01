@@ -2,43 +2,39 @@
 
 #include <ll/api/mod/RegisterHelper.h>
 #include <ll/api/memory/Hook.h>
-#include <ll/api/memory/Signature.h>
 #include <ll/api/io/Logger.h>
 
 #include <mc/world/actor/player/Player.h>
 #include <mc/world/item/ItemStack.h>
 #include <mc/world/actor/Actor.h>
 #include <mc/world/level/Level.h>
+#include <mc/world/inventory/transaction/ItemUseOnActorInventoryTransaction.h>
+#include <mc/world/inventory/transaction/InventoryTransactionError.h>
+#include <mc/world/actor/player/PlayerInventory.h>
 
 using namespace ll::memory;
-using namespace ll::literals::memory_literals; 
 
-class ActorRuntimeID {
-public:
-    unsigned long long id;
-};
-
-constexpr int InventoryTransactionError_Success = 0;
-
-LL_AUTO_STATIC_HOOK(
-    NameTagPlus,
+LL_AUTO_TYPE_INSTANCE_HOOK(
+    ForceNameTagHook,
     ll::memory::HookPriority::Normal,
-    "48 8B C4 48 89 58 ? 55 56 57 41 54 41 55 41 56 41 57 48 8D A8 ? ? ? ? 48 81 EC ? ? ? ? 0F 29 70 ? 0F 29 78 ? 44 0F 29 40 ? 44 0F 29 48 ? 48 8B 05 ? ? ? ? 48 33 C4 48 89 85 ? ? ? ? 45 0F B6 E0"_sig,
-    int,            
-    void* a1,       
-    Player* player, 
-    bool isLite     
+    ItemUseOnActorInventoryTransaction,
+    &ItemUseOnActorInventoryTransaction::$handle,
+    InventoryTransactionError,
+    Player& player,
+    bool isSenderAuthority
 ) {
-    if (!player) return origin(a1, player, isLite);
+    auto& actionType = (ItemUseOnActorInventoryTransaction::ActionType&)this->mActionType;
+    if (actionType == ItemUseOnActorInventoryTransaction::ActionType::Attack) {
+         return origin(player, isSenderAuthority);
+    }
 
-    auto& item = player->getSelectedItem();
+    const auto& item = player.getSelectedItem();
 
     if (!item.isNull() && item.getTypeName() == "minecraft:name_tag" && item.hasCustomHoverName()) {
         
-        // 偏移量 104/0x68
-        // *(_QWORD *)(a1 + 104)
-        ActorRuntimeID targetId = *reinterpret_cast<ActorRuntimeID*>((uintptr_t)a1 + 104);
-        auto target = player->getLevel().getRuntimeEntity(targetId, false);
+        auto& targetId = (ActorRuntimeID&)this->mRuntimeId;
+        
+        auto target = player.getLevel().getRuntimeEntity(targetId, false);
         
         if (target) {
             std::string newName = item.getCustomName();
@@ -47,11 +43,17 @@ LL_AUTO_STATIC_HOOK(
             target->setNameTagVisible(true);
             target->setPersistent(); 
 
-            return InventoryTransactionError_Success;
+            if (!player.isCreative()) {
+                ItemStack handItem = item;
+                
+                handItem.remove(1);
+                player.setCarriedItem(handItem);
+                player.sendInventory(true);
+            }
+            return (InventoryTransactionError)0; 
         }
     }
-
-    return origin(a1, player, isLite);
+    return origin(player, isSenderAuthority);
 }
 
 namespace nametag {
